@@ -1,0 +1,116 @@
+﻿CANVAS DE IMPLEMENTACIÓN: UPN ASSIST V2.0 (Serverless Education Engine)
+1. Visión del Producto
+Una plataforma de aprendizaje de programación (LMS) "GitHub-Native" que funciona enteramente en el navegador. Elimina la necesidad de servidores de ejecución costosos (como Replit) utilizando WebAssembly para ejecutar Python y Java localmente, integrando un ciclo de feedback "Test-Driven" potenciado por IA.
+2. Arquitectura Técnica (The Modern Stack)
+Capa
+	Tecnología
+	Justificación
+	Frontend Framework
+	Next.js 15 (App Router)
+	Rendimiento, SEO y estructura moderna.
+	Identidad
+	Clerk
+	Autenticación robusta y login social con GitHub.
+	Editor de Código
+	CodeMirror 6
+	El estándar moderno. Accesible, ligero y excelente soporte móvil.
+	Runtime Python
+	Pyodide (WASM)
+	Ejecuta Python científico completo en el navegador.
+	Runtime Java
+	Cheerpj 3.0
+	Ejecuta Bytecode Java en el navegador (única opción viable serverless).
+	Base de Datos (Cursos)
+	GitHub Repository
+	"Content as Code". Los cursos son archivos Markdown y código en un repo público.
+	Inteligencia Artificial
+	Vercel AI SDK + Google Gemini Flash
+	Latencia baja y costo casi nulo para el feedback.
+	3. El Motor de Feedback "Estilo MOOC.fi" (El Núcleo)
+Para igualar o superar a MOOC.fi sin un servidor backend, implementaremos un Orquestador de Pruebas en el Cliente.
+Flujo de Verificación (Pipeline):
+1. Inyección (Hidden Context):
+   * El alumno ve: main.py (Su código).
+   * El sistema descarga en secreto desde GitHub: test_main.py (Pruebas unitarias escritas por el profesor).
+2. Fusión Virtual:
+   * En memoria (no visible para el alumno), el sistema concatena el código del alumno + los tests.
+3. Ejecución Aislada:
+   * Python: Pyodide ejecuta pytest sobre el archivo fusionado.
+   * Java: Cheerpj compila el código del alumno y ejecuta JUnit.
+4. Captura de Resultados:
+   * El sistema intercepta stdout (salida normal) y stderr (errores).
+   * Si Exit Code == 0: ✅ Éxito. Confeti y guardado de progreso.
+   * Si Exit Code != 0: ❌ Fallo. Se activa el Agente IA.
+Estrategia de Prompting para la IA (Pedagogía Socrática)
+Cuando el test falla, enviamos a la IA el siguiente JSON estructurado:
+{
+ "lenguaje": "python",
+ "codigo_alumno": "def suma(a,b): return a * b",
+ "codigo_test": "assert suma(2,2) == 4",
+ "error_runtime": "AssertionError: assert 4 == 4 failed",
+ "instruccion": "Actúa como un profesor de la Universidad de Helsinki. No des la solución. Explica por qué multiplicar no es lo mismo que sumar en este contexto."
+}
+
+4. Estructura de Datos ("Content as Code")
+Tu repositorio de GitHub (xabierolaz/upn-curriculum) será la única fuente de verdad.
+/upn-curriculum
+├── /python-intro
+│   ├── /01-variables
+│   │   ├── instructions.md   (Teoría visible)
+│   │   ├── template.py       (Código base visible)
+│   │   └── tests.py          (Unit tests OCULTOS - pytest)
+│   └── /02-bucles
+│       ├── instructions.md
+│       ├── template.py
+│       └── tests.py
+├── /java-poo
+│   ├── /01-clases
+│   │   ├── instructions.md
+│   │   ├── Main.java         (Plantilla)
+│   │   └── TestMain.java     (Unit tests OCULTOS - JUnit)
+└── course-manifest.json      (Índice de cursos)
+
+5. Roadmap de Implementación
+Fase 1: Cimientos (Semana 1)
+* [ ] Inicializar Next.js 15 + Tailwind + Shadcn UI.
+* [ ] Integrar Clerk Auth (Solo GitHub).
+* [ ] Crear servicio GitHubFetcher para leer el árbol de archivos del repo de cursos.
+Fase 2: El Editor Inteligente (Semana 2)
+* [ ] Integrar CodeMirror 6 (@uiw/react-codemirror).
+* [ ] Configurar tema oscuro y extensiones de lenguaje (Python/Java).
+* [ ] Implementar panel de consola "Terminal" (usando xterm.js para realismo).
+Fase 3: Runtimes WebAssembly (Semana 3)
+* [ ] Hook Python: Implementar usePyodide. Debe cargar micropip y pytest.
+* [ ] Hook Java: Implementar integración con Cheerpj. Debe montar un sistema de archivos virtual (/str/) para compilar clases.
+Fase 4: El Juez y el Tutor (Semana 4)
+* [ ] Crear la lógica de fusión (Código + Test).
+* [ ] Integrar Vercel AI SDK.
+* [ ] Diseñar los prompts de sistema para el feedback de errores.
+* [ ] Implementar persistencia de progreso (guardar ticks verdes en localStorage o metadatos de usuario de Clerk).
+6. Comparativa de Costos y Mantenimiento
+Concepto
+	Costo Mensual Estimado
+	Notas
+	Hosting (Vercel)
+	$0 (Hobby)
+	Escalable a Pro ($20) si crece mucho.
+	Auth (Clerk)
+	$0
+	Hasta 10,000 usuarios activos mensuales.
+	Contenido (GitHub)
+	$0
+	Repositorios públicos son gratis e ilimitados.
+	Ejecución (WASM)
+	$0
+	Usa la CPU del alumno, no tu servidor.
+	IA (Gemini Flash)
+	~$2 - $5
+	Depende del uso. Gemini Flash es extremadamente barato y rápido.
+	Total
+	**~$5 / mes**
+	Vs. $100+ de servidores tradicionales.
+	7. Ventajas Clave sobre Replit
+1. Propiedad de Datos: Todo ocurre en tu dominio. No dependes de que Replit cambie sus precios.
+2. Personalización: Puedes modificar el editor para que bloquee ciertas líneas o añada ayudas visuales.
+3. Offline-Capable: Al usar Service Workers y WASM, técnicamente un alumno podría seguir programando si se le cae el internet momentáneamente (una vez cargado el motor).
+4. IA Contextual: Al tener acceso a los Tests Unitarios, la IA sabe exactamente qué falló, no solo que "hubo un error".
