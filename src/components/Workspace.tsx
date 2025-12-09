@@ -10,7 +10,7 @@ import { TerminalPanel, TerminalRef } from './TerminalPanel';
 import { usePyodide } from '@/hooks/usePyodide';
 import { useCheerpj } from '@/hooks/useCheerpj';
 import { getTestCode } from '@/app/actions';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import confetti from 'canvas-confetti';
 
 interface WorkspaceProps {
