@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { GitHubFetcher } from '@/services/githubFetcher';
+import { GitHubFetcher, GitHubFile } from '@/services/githubFetcher';
 import { Folder, Code2, Terminal } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 export default async function CoursesPage() {
-  let courses = [];
+  let courses: GitHubFile[] = [];
   try {
     const contents = await GitHubFetcher.getRepoContents('');
     // Filter for directories that likely represent courses (e.g., python-intro, java-poo)
