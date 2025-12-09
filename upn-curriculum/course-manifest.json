@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "python-intro",
+    "title": "Informática: Sesión 1 (Python)",
+    "description": "Introducción, variables, operaciones y lógica booleana.",
+    "icon": "python"
+  },
+  {
+    "slug": "java-poo",
+    "title": "Informática: Sesión Java (Próximamente)",
+    "description": "Contenido futuro de la asignatura.",
+    "icon": "java"
+  }
+]
