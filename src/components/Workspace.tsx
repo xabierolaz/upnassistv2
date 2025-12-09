@@ -346,7 +346,8 @@ exit_code
                <h2 className="font-semibold text-lg text-blue-900 dark:text-blue-300">AI Tutor</h2>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map(m => (
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {messages.map((m: any) => (
                     <div key={m.id} className={cn("p-3 rounded-lg text-sm", m.role === 'user' ? 'bg-zinc-100 dark:bg-zinc-800 ml-8' : 'bg-blue-50 dark:bg-blue-900/10 mr-4 border border-blue-100 dark:border-blue-900/30')}>
                         <span className="font-bold block mb-1 text-xs uppercase opacity-50">{m.role === 'user' ? 'You' : 'Tutor'}</span>
                         <ReactMarkdown>{m.content}</ReactMarkdown>
