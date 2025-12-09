@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { GitHubFetcher } from '@/services/githubFetcher';
+import { GitHubFetcher, GitHubFile } from '@/services/githubFetcher';
 import { ArrowLeft, BookOpen, ChevronRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface PageProps {
   params: Promise<{
@@ -10,16 +10,16 @@ interface PageProps {
   }>;
 }
 
-export default async function CourseModulesPage(props: PageProps) {
+export default async function CoursePage(props: PageProps) {
   const params = await props.params;
   const { course } = params;
   
-  let modules = [];
+  let modules: GitHubFile[] = [];
   try {
     const contents = await GitHubFetcher.getRepoContents(course);
     modules = contents.filter(item => item.type === 'dir').sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
-    console.error(`Failed to fetch modules for ${course}`, error);
+    console.error("Failed to fetch modules", error);
   }
 
   return (
