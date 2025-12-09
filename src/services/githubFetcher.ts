@@ -1,6 +1,7 @@
 
 const REPO_OWNER = 'xabierolaz';
-const REPO_NAME = 'upn-curriculum';
+const REPO_NAME = 'upnassistv2';
+const BASE_PATH = 'upn-curriculum'; // Subdirectory for content
 const BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 
 export interface GitHubFile {
@@ -23,7 +24,10 @@ export interface GitHubFile {
 export const GitHubFetcher = {
   async getRepoContents(path: string = ''): Promise<GitHubFile[]> {
     try {
-      const response = await fetch(`${BASE_URL}/contents/${path}`, {
+      // Construct the full path including the base content directory
+      const fullPath = path ? `${BASE_PATH}/${path}` : BASE_PATH;
+      
+      const response = await fetch(`${BASE_URL}/contents/${fullPath}`, {
         headers: {
           'Accept': 'application/vnd.github.v3+json',
           // Add cache control if needed, e.g., 'Cache-Control': 'no-cache'
@@ -53,7 +57,8 @@ export const GitHubFetcher = {
 
   async getFileContent(path: string): Promise<string> {
       try {
-           const response = await fetch(`${BASE_URL}/contents/${path}`, {
+           const fullPath = `${BASE_PATH}/${path}`;
+           const response = await fetch(`${BASE_URL}/contents/${fullPath}`, {
             headers: {
                 'Accept': 'application/vnd.github.v3.raw', // Request raw content
             },
